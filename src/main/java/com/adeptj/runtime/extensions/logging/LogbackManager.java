@@ -18,27 +18,41 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.ext.logging;
+package com.adeptj.runtime.extensions.logging;
 
-import ch.qos.logback.classic.pattern.ThreadConverter;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import org.apache.commons.lang3.StringUtils;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+
+import java.util.List;
 
 /**
- * Extended version of {@link ThreadConverter} which trims the OSGi ConfigAdmin update thread name.
+ * LogbackManager
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public class ExtThreadConverter extends ThreadConverter {
+public interface LogbackManager {
 
-    @Override
-    public String convert(ILoggingEvent event) {
-        String threadName = super.convert(event);
-        if (StringUtils.startsWith(threadName, "CM Event Dispatcher")) {
-            return "CM Event Dispatcher";
-        } else if (StringUtils.startsWith(threadName, "Background Update")) {
-            return "Background Update";
-        }
-        return threadName;
-    }
+    LoggerContext getLoggerContext();
+
+    LogbackManager addAppender(Appender<ILoggingEvent> appender);
+
+    List<Appender<ILoggingEvent>> getAppenders();
+
+    Appender<ILoggingEvent> getAppender(String name);
+
+    void addLogger(LogbackConfig logbackConfig);
+
+    boolean detachAppender(String loggerName, String appenderName);
+
+    PatternLayoutEncoder newLayoutEncoder(String logPattern);
+
+    ConsoleAppender<ILoggingEvent> newConsoleAppender(String name, String logPattern);
+
+    RollingFileAppender<ILoggingEvent> newRollingFileAppender(LogbackConfig logbackConfig);
+
+    void newAsyncAppender(LogbackConfig logbackConfig);
 }

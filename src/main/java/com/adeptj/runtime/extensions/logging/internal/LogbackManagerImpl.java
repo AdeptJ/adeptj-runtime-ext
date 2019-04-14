@@ -18,7 +18,7 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.ext.logging;
+package com.adeptj.runtime.extensions.logging.internal;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
@@ -32,6 +32,8 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
+import com.adeptj.runtime.extensions.logging.LogbackConfig;
+import com.adeptj.runtime.extensions.logging.LogbackManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +41,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LogbackManager
+ * Default implementation of {@link LogbackManager}.
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public enum LogbackManager {
-
-    INSTANCE;
+public class LogbackManagerImpl implements LogbackManager {
 
     private static final String SYS_PROP_LOG_IMMEDIATE_FLUSH = "log.immediate.flush";
 
@@ -57,24 +57,28 @@ public enum LogbackManager {
 
     private volatile LoggerContext loggerContext;
 
-    LogbackManager() {
+    public LogbackManagerImpl() {
         this.appenderList = new ArrayList<>();
         this.loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
+    @Override
     public LoggerContext getLoggerContext() {
         return this.loggerContext;
     }
 
+    @Override
     public LogbackManager addAppender(Appender<ILoggingEvent> appender) {
         this.appenderList.add(appender);
         return this;
     }
 
+    @Override
     public List<Appender<ILoggingEvent>> getAppenders() {
         return this.appenderList;
     }
 
+    @Override
     public Appender<ILoggingEvent> getAppender(String name) {
         return this.appenderList.stream()
                 .filter(appender -> StringUtils.equals(appender.getName(), name))
@@ -82,6 +86,7 @@ public enum LogbackManager {
                 .orElse(null);
     }
 
+    @Override
     public void addLogger(LogbackConfig logbackConfig) {
         logbackConfig.getLoggerNames()
                 .forEach(loggerName -> {
@@ -92,11 +97,13 @@ public enum LogbackManager {
                 });
     }
 
+    @Override
     public boolean detachAppender(String loggerName, String appenderName) {
         return this.loggerContext.getLogger(loggerName).detachAppender(appenderName);
     }
 
-    public PatternLayoutEncoder createLayoutEncoder(String logPattern) {
+    @Override
+    public PatternLayoutEncoder newLayoutEncoder(String logPattern) {
         PatternLayoutEncoder layoutEncoder = new PatternLayoutEncoder();
         layoutEncoder.setContext(this.loggerContext);
         layoutEncoder.setPattern(logPattern);
@@ -107,17 +114,19 @@ public enum LogbackManager {
         return layoutEncoder;
     }
 
-    public ConsoleAppender<ILoggingEvent> createConsoleAppender(String name, String logPattern) {
+    @Override
+    public ConsoleAppender<ILoggingEvent> newConsoleAppender(String name, String logPattern) {
         ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
         consoleAppender.setName(name);
         consoleAppender.setContext(this.loggerContext);
-        consoleAppender.setEncoder(this.createLayoutEncoder(logPattern));
+        consoleAppender.setEncoder(this.newLayoutEncoder(logPattern));
         consoleAppender.setWithJansi(true);
         consoleAppender.start();
         return consoleAppender;
     }
 
-    public RollingFileAppender<ILoggingEvent> createRollingFileAppender(LogbackConfig logbackConfig) {
+    @Override
+    public RollingFileAppender<ILoggingEvent> newRollingFileAppender(LogbackConfig logbackConfig) {
         RollingFileAppender<ILoggingEvent> fileAppender = new RollingFileAppender<>();
         fileAppender.setName(logbackConfig.getAppenderName());
         fileAppender.setFile(logbackConfig.getLogFile());
@@ -126,7 +135,7 @@ public enum LogbackManager {
         if (!fileAppender.isImmediateFlush()) {
             fileAppender.setImmediateFlush(logbackConfig.isImmediateFlush());
         }
-        fileAppender.setEncoder(this.createLayoutEncoder(logbackConfig.getPattern()));
+        fileAppender.setEncoder(this.newLayoutEncoder(logbackConfig.getPattern()));
         fileAppender.setContext(this.loggerContext);
         SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
         rollingPolicy.setMaxFileSize(FileSize.valueOf(logbackConfig.getLogMaxSize()));
@@ -141,7 +150,8 @@ public enum LogbackManager {
         return fileAppender;
     }
 
-    public void createAsyncAppender(LogbackConfig logbackConfig) {
+    @Override
+    public void newAsyncAppender(LogbackConfig logbackConfig) {
         AsyncAppender asyncAppender = new AsyncAppender();
         asyncAppender.setName(logbackConfig.getAsyncAppenderName());
         asyncAppender.setQueueSize(logbackConfig.getAsyncLogQueueSize());
@@ -149,9 +159,5 @@ public enum LogbackManager {
         asyncAppender.setContext(this.loggerContext);
         asyncAppender.addAppender(logbackConfig.getAsyncAppender());
         asyncAppender.start();
-    }
-
-    public static LogbackManager getInstance() {
-        return INSTANCE;
     }
 }

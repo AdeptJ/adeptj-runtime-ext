@@ -18,7 +18,7 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.ext.logging;
+package com.adeptj.runtime.extensions.logging;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;

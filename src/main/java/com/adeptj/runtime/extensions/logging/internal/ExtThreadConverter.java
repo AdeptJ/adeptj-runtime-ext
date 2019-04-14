@@ -1,6 +1,6 @@
 /*
 ###############################################################################
-#                                                                             # 
+#                                                                             #
 #    Copyright 2016, AdeptJ (http://www.adeptj.com)                           #
 #                                                                             #
 #    Licensed under the Apache License, Version 2.0 (the "License");          #
@@ -18,31 +18,27 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.ext;
+package com.adeptj.runtime.extensions.logging.internal;
 
-import org.apache.commons.lang3.ArrayUtils;
+import ch.qos.logback.classic.pattern.ThreadConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.EventListener;
-
 /**
- * Stores the OSGi web console password as a variable.
+ * Extended version of {@link } which trims the OSGi ConfigAdmin update thread name.
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public class WebConsolePasswordChangeListener implements EventListener {
+public class ExtThreadConverter extends ThreadConverter {
 
-    private volatile char[] password;
-
-    public char[] getPassword() {
-        return this.password;
-    }
-
-    public void onPasswordChange(String pwd) {
-        this.password = StringUtils.isEmpty(pwd) ? null : pwd.toCharArray();
-    }
-
-    public boolean isPasswordNotEmpty() {
-        return ArrayUtils.isNotEmpty(this.password);
+    @Override
+    public String convert(ILoggingEvent event) {
+        String threadName = super.convert(event);
+        if (StringUtils.startsWith(threadName, "CM Event Dispatcher")) {
+            return "CM Event Dispatcher";
+        } else if (StringUtils.startsWith(threadName, "Background Update")) {
+            return "Background Update";
+        }
+        return threadName;
     }
 }

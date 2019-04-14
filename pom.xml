@@ -26,8 +26,8 @@
         <artifactId>adeptj-parent</artifactId>
         <version>6</version>
     </parent>
-    <artifactId>adeptj-runtime-ext</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>adeptj-runtime-extensions</artifactId>
+    <version>1.0.0.Final</version>
     <packaging>jar</packaging>
     <name>AdeptJ Runtime Extensions</name>
     <description>AdeptJ Runtime Extensions</description>
@@ -84,12 +84,18 @@
     </distributionManagement>
 
     <scm>
-        <url>https://github.com/AdeptJ/adeptj-runtime-ext</url>
-        <connection>scm:git:git@github.com:AdeptJ/adeptj-runtime-ext.git</connection>
-        <developerConnection>scm:git:git@github.com:AdeptJ/adeptj-runtime-ext.git</developerConnection>
+        <url>https://github.com/AdeptJ/adeptj-runtime-extensions</url>
+        <connection>scm:git:git@github.com:AdeptJ/adeptj-runtime-extensions.git</connection>
+        <developerConnection>scm:git:git@github.com:AdeptJ/adeptj-runtime-extensions.git</developerConnection>
     </scm>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -101,6 +107,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
