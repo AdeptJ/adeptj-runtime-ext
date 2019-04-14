@@ -26,6 +26,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
+import com.adeptj.runtime.extensions.logging.core.LogbackConfig;
 
 import java.util.List;
 
@@ -35,6 +36,10 @@ import java.util.List;
  * @author Rakesh.Kumar, AdeptJ
  */
 public interface LogbackManager {
+
+    String APPENDER_CONSOLE = "CONSOLE";
+
+    String APPENDER_FILE = "FILE";
 
     LoggerContext getLoggerContext();
 

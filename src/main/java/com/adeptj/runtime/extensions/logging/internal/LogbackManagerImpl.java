@@ -32,13 +32,15 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
-import com.adeptj.runtime.extensions.logging.LogbackConfig;
+import com.adeptj.runtime.extensions.logging.core.LogbackConfig;
 import com.adeptj.runtime.extensions.logging.LogbackManager;
+import com.adeptj.runtime.extensions.logging.core.ExtHighlightingCompositeConverter;
+import com.adeptj.runtime.extensions.logging.core.ExtThreadConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Default implementation of {@link LogbackManager}.
@@ -49,16 +51,12 @@ public class LogbackManagerImpl implements LogbackManager {
 
     private static final String SYS_PROP_LOG_IMMEDIATE_FLUSH = "log.immediate.flush";
 
-    public static final String APPENDER_CONSOLE = "CONSOLE";
+    private List<Appender<ILoggingEvent>> appenders;
 
-    public static final String APPENDER_FILE = "FILE";
-
-    private final List<Appender<ILoggingEvent>> appenderList;
-
-    private volatile LoggerContext loggerContext;
+    private LoggerContext loggerContext;
 
     public LogbackManagerImpl() {
-        this.appenderList = new ArrayList<>();
+        this.appenders = new CopyOnWriteArrayList<>();
         this.loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
@@ -69,18 +67,18 @@ public class LogbackManagerImpl implements LogbackManager {
 
     @Override
     public LogbackManager addAppender(Appender<ILoggingEvent> appender) {
-        this.appenderList.add(appender);
+        this.appenders.add(appender);
         return this;
     }
 
     @Override
     public List<Appender<ILoggingEvent>> getAppenders() {
-        return this.appenderList;
+        return this.appenders;
     }
 
     @Override
     public Appender<ILoggingEvent> getAppender(String name) {
-        return this.appenderList.stream()
+        return this.appenders.stream()
                 .filter(appender -> StringUtils.equals(appender.getName(), name))
                 .findFirst()
                 .orElse(null);
@@ -89,8 +87,8 @@ public class LogbackManagerImpl implements LogbackManager {
     @Override
     public void addLogger(LogbackConfig logbackConfig) {
         logbackConfig.getLoggerNames()
-                .forEach(loggerName -> {
-                    Logger logger = this.loggerContext.getLogger(loggerName);
+                .forEach(name -> {
+                    Logger logger = this.loggerContext.getLogger(name);
                     logger.setLevel(Level.toLevel(logbackConfig.getLevel()));
                     logger.setAdditive(logbackConfig.isAdditivity());
                     logbackConfig.getAppenders().forEach(logger::addAppender);

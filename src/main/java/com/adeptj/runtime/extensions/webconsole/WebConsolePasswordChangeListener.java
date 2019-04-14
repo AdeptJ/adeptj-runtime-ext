@@ -18,7 +18,7 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.extensions;
+package com.adeptj.runtime.extensions.webconsole;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

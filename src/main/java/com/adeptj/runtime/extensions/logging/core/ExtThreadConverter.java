@@ -18,43 +18,27 @@
 ###############################################################################
 */
 
-package com.adeptj.runtime.extensions.logging.internal;
+package com.adeptj.runtime.extensions.logging.core;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.pattern.color.HighlightingCompositeConverter;
+import ch.qos.logback.classic.pattern.ThreadConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-
-import static ch.qos.logback.classic.Level.DEBUG_INT;
-import static ch.qos.logback.classic.Level.ERROR_INT;
-import static ch.qos.logback.classic.Level.INFO_INT;
-import static ch.qos.logback.classic.Level.WARN_INT;
-import static ch.qos.logback.core.pattern.color.ANSIConstants.BLUE_FG;
-import static ch.qos.logback.core.pattern.color.ANSIConstants.BOLD;
-import static ch.qos.logback.core.pattern.color.ANSIConstants.DEFAULT_FG;
-import static ch.qos.logback.core.pattern.color.ANSIConstants.RED_FG;
-import static ch.qos.logback.core.pattern.color.ANSIConstants.YELLOW_FG;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Extended version of {@link} which prints debug log level in yellow.
+ * Extended version of {@link } which trims the OSGi ConfigAdmin update thread name.
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public class ExtHighlightingCompositeConverter extends HighlightingCompositeConverter {
+public class ExtThreadConverter extends ThreadConverter {
 
     @Override
-    protected String getForegroundColorCode(ILoggingEvent event) {
-        Level level = event.getLevel();
-        switch (level.toInt()) {
-            case ERROR_INT:
-                return BOLD + RED_FG;
-            case WARN_INT:
-                return RED_FG;
-            case INFO_INT:
-                return BLUE_FG;
-            case DEBUG_INT:
-                return YELLOW_FG;
-            default:
-                return DEFAULT_FG;
+    public String convert(ILoggingEvent event) {
+        String threadName = super.convert(event);
+        if (StringUtils.startsWith(threadName, "CM Event Dispatcher")) {
+            return "CM Event Dispatcher";
+        } else if (StringUtils.startsWith(threadName, "Background Update")) {
+            return "Background Update";
         }
+        return threadName;
     }
 }
