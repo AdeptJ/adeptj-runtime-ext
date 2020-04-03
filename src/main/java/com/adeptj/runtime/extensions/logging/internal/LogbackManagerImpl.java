@@ -42,6 +42,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * Default implementation of {@link LogbackManager}.
  *
@@ -105,6 +107,7 @@ public class LogbackManagerImpl implements LogbackManager {
         PatternLayoutEncoder layoutEncoder = new PatternLayoutEncoder();
         layoutEncoder.setContext(this.loggerContext);
         layoutEncoder.setPattern(logPattern);
+        layoutEncoder.setCharset(UTF_8);
         layoutEncoder.start();
         PatternLayout layout = (PatternLayout) layoutEncoder.getLayout();
         layout.getDefaultConverterMap().put("highlight", ExtHighlightingCompositeConverter.class.getName());
@@ -126,21 +129,21 @@ public class LogbackManagerImpl implements LogbackManager {
     @Override
     public RollingFileAppender<ILoggingEvent> newRollingFileAppender(LogbackConfig logbackConfig) {
         RollingFileAppender<ILoggingEvent> fileAppender = new RollingFileAppender<>();
+        fileAppender.setContext(this.loggerContext);
         fileAppender.setName(logbackConfig.getAppenderName());
         fileAppender.setFile(logbackConfig.getLogFile());
         fileAppender.setAppend(true);
+        fileAppender.setEncoder(this.newLayoutEncoder(logbackConfig.getPattern()));
         fileAppender.setImmediateFlush(Boolean.getBoolean(SYS_PROP_LOG_IMMEDIATE_FLUSH));
         if (!fileAppender.isImmediateFlush()) {
             fileAppender.setImmediateFlush(logbackConfig.isImmediateFlush());
         }
-        fileAppender.setEncoder(this.newLayoutEncoder(logbackConfig.getPattern()));
-        fileAppender.setContext(this.loggerContext);
         SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
-        rollingPolicy.setMaxFileSize(FileSize.valueOf(logbackConfig.getLogMaxSize()));
         rollingPolicy.setContext(this.loggerContext);
+        rollingPolicy.setParent(fileAppender);
+        rollingPolicy.setMaxFileSize(FileSize.valueOf(logbackConfig.getLogMaxSize()));
         rollingPolicy.setFileNamePattern(logbackConfig.getRolloverFile());
         rollingPolicy.setMaxHistory(logbackConfig.getLogMaxHistory());
-        rollingPolicy.setParent(fileAppender);
         rollingPolicy.start();
         fileAppender.setRollingPolicy(rollingPolicy);
         fileAppender.setTriggeringPolicy(rollingPolicy);
@@ -151,10 +154,10 @@ public class LogbackManagerImpl implements LogbackManager {
     @Override
     public void newAsyncAppender(LogbackConfig logbackConfig) {
         AsyncAppender asyncAppender = new AsyncAppender();
+        asyncAppender.setContext(this.loggerContext);
         asyncAppender.setName(logbackConfig.getAsyncAppenderName());
         asyncAppender.setQueueSize(logbackConfig.getAsyncLogQueueSize());
         asyncAppender.setDiscardingThreshold(logbackConfig.getAsyncLogDiscardingThreshold());
-        asyncAppender.setContext(this.loggerContext);
         asyncAppender.addAppender(logbackConfig.getAsyncAppender());
         asyncAppender.start();
     }
