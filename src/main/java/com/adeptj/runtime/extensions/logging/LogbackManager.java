@@ -39,7 +39,7 @@ public interface LogbackManager {
 
     String APPENDER_CONSOLE = "CONSOLE";
 
-    String APPENDER_FILE = "FILE";
+    String APPENDER_ROLLING_FILE = "ROLLING_FILE";
 
     LoggerContext getLoggerContext();
 

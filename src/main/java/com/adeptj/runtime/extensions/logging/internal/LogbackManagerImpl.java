@@ -53,9 +53,9 @@ public class LogbackManagerImpl implements LogbackManager {
 
     private static final String SYS_PROP_LOG_IMMEDIATE_FLUSH = "log.immediate.flush";
 
-    private List<Appender<ILoggingEvent>> appenders;
+    private final List<Appender<ILoggingEvent>> appenders;
 
-    private LoggerContext loggerContext;
+    private final LoggerContext loggerContext;
 
     public LogbackManagerImpl() {
         this.appenders = new CopyOnWriteArrayList<>();
@@ -118,8 +118,8 @@ public class LogbackManagerImpl implements LogbackManager {
     @Override
     public ConsoleAppender<ILoggingEvent> newConsoleAppender(String name, String logPattern) {
         ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
-        consoleAppender.setName(name);
         consoleAppender.setContext(this.loggerContext);
+        consoleAppender.setName(name);
         consoleAppender.setEncoder(this.newLayoutEncoder(logPattern));
         consoleAppender.setWithJansi(true);
         consoleAppender.start();

@@ -1,4 +1,4 @@
-package com.adeptj.runtime.extensions.logging;
+package com.adeptj.runtime.ext.logging;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -51,8 +51,8 @@ public class LoggingBenchmark {
         layoutEncoder.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%.-23thread]) %highlight(%-5level) %cyan(%logger{100}) - %msg%n");
         layoutEncoder.start();
         PatternLayout layout = (PatternLayout) layoutEncoder.getLayout();
-        layout.getDefaultConverterMap().put("highlight", ExtHighlightingCompositeConverter.class.getName());
-        layout.getDefaultConverterMap().put("thread", ExtThreadConverter.class.getName());
+        //layout.getDefaultConverterMap().put("highlight", ExtHighlightingCompositeConverter.class.getName());
+        //layout.getDefaultConverterMap().put("thread", ExtThreadConverter.class.getName());
         ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
         consoleAppender.setName("CONSOLE");
         consoleAppender.setContext(loggerContext);
