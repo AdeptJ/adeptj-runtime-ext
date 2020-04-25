@@ -35,11 +35,11 @@ import static ch.qos.logback.core.pattern.color.ANSIConstants.RED_FG;
 import static ch.qos.logback.core.pattern.color.ANSIConstants.YELLOW_FG;
 
 /**
- * Extended version of {@link} which prints debug log level in yellow.
+ * Extended version of {@link HighlightingCompositeConverter} which prints debug log level in yellow.
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public class ExtHighlightingCompositeConverter extends HighlightingCompositeConverter {
+public class LogLevelHighlightingCustomizer extends HighlightingCompositeConverter {
 
     @Override
     protected String getForegroundColorCode(ILoggingEvent event) {

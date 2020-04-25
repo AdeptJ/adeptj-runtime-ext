@@ -6,6 +6,8 @@ import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import com.adeptj.runtime.extensions.logging.core.LogLevelHighlightingCustomizer;
+import com.adeptj.runtime.extensions.logging.core.LogThreadNameCustomizer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
@@ -51,8 +53,8 @@ public class LoggingBenchmark {
         layoutEncoder.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} %green([%.-23thread]) %highlight(%-5level) %cyan(%logger{100}) - %msg%n");
         layoutEncoder.start();
         PatternLayout layout = (PatternLayout) layoutEncoder.getLayout();
-        //layout.getDefaultConverterMap().put("highlight", ExtHighlightingCompositeConverter.class.getName());
-        //layout.getDefaultConverterMap().put("thread", ExtThreadConverter.class.getName());
+        layout.getDefaultConverterMap().put("highlight", LogLevelHighlightingCustomizer.class.getName());
+        layout.getDefaultConverterMap().put("thread", LogThreadNameCustomizer.class.getName());
         ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
         consoleAppender.setName("CONSOLE");
         consoleAppender.setContext(loggerContext);
@@ -62,8 +64,12 @@ public class LoggingBenchmark {
         Logger root = loggerContext.getLogger(ROOT_LOGGER_NAME);
         root.setLevel(toLevel("DEBUG"));
         root.addAppender(consoleAppender);
+        Logger logger = loggerContext.getLogger("com.adeptj");
+        logger.setAdditive(false);
+        logger.setLevel(toLevel("DEBUG"));
+        logger.addAppender(consoleAppender);
         loggerContext.start();
-        System.out.println(NANOSECONDS.toMillis(System.nanoTime() - start));
+        System.out.println(NANOSECONDS.toMillis(System.nanoTime() - start) + "ms");
         org.slf4j.Logger log = LoggerFactory.getLogger("com.adeptj");
         log.info("Hello World!!");
         log.info("{}", OffsetDateTime.now().plus(Duration.ofDays(31)).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));

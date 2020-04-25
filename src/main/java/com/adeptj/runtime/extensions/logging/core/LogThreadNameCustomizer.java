@@ -25,11 +25,11 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Extended version of {@link } which trims the OSGi ConfigAdmin update thread name.
+ * Extended version of {@link ThreadConverter} which trims the OSGi ConfigAdmin update thread name.
  *
  * @author Rakesh.Kumar, AdeptJ
  */
-public class ExtThreadConverter extends ThreadConverter {
+public class LogThreadNameCustomizer extends ThreadConverter {
 
     @Override
     public String convert(ILoggingEvent event) {

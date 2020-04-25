@@ -33,8 +33,8 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import com.adeptj.runtime.extensions.logging.LogbackManager;
-import com.adeptj.runtime.extensions.logging.core.ExtHighlightingCompositeConverter;
-import com.adeptj.runtime.extensions.logging.core.ExtThreadConverter;
+import com.adeptj.runtime.extensions.logging.core.LogThreadNameCustomizer;
+import com.adeptj.runtime.extensions.logging.core.LogLevelHighlightingCustomizer;
 import com.adeptj.runtime.extensions.logging.core.LogbackConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -110,8 +110,8 @@ public class LogbackManagerImpl implements LogbackManager {
         layoutEncoder.setCharset(UTF_8);
         layoutEncoder.start();
         PatternLayout layout = (PatternLayout) layoutEncoder.getLayout();
-        layout.getDefaultConverterMap().put("highlight", ExtHighlightingCompositeConverter.class.getName());
-        layout.getDefaultConverterMap().put("thread", ExtThreadConverter.class.getName());
+        layout.getDefaultConverterMap().put("highlight", LogLevelHighlightingCustomizer.class.getName());
+        layout.getDefaultConverterMap().put("thread", LogThreadNameCustomizer.class.getName());
         return layoutEncoder;
     }
 
