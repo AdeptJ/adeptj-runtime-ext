@@ -38,6 +38,8 @@ public class LogThreadNameCustomizer extends ThreadConverter {
             return "CM Event Dispatcher";
         } else if (StringUtils.startsWith(threadName, "Background Update")) {
             return "Background Update";
+        } else if (StringUtils.startsWith(threadName, "Apache Felix Configuration")) {
+            return "Apache Felix Configuration";
         }
         return threadName;
     }

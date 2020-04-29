@@ -152,7 +152,7 @@ public class LogbackManagerImpl implements LogbackManager {
     }
 
     @Override
-    public void newAsyncAppender(LogbackConfig logbackConfig) {
+    public void addAsyncAppender(LogbackConfig logbackConfig) {
         AsyncAppender asyncAppender = new AsyncAppender();
         asyncAppender.setContext(this.loggerContext);
         asyncAppender.setName(logbackConfig.getAsyncAppenderName());

@@ -59,5 +59,5 @@ public interface LogbackManager {
 
     RollingFileAppender<ILoggingEvent> newRollingFileAppender(LogbackConfig logbackConfig);
 
-    void newAsyncAppender(LogbackConfig logbackConfig);
+    void addAsyncAppender(LogbackConfig logbackConfig);
 }
