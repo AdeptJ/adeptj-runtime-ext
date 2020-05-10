@@ -33,8 +33,8 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
 import com.adeptj.runtime.extensions.logging.LogbackManager;
-import com.adeptj.runtime.extensions.logging.core.LogThreadNameCustomizer;
 import com.adeptj.runtime.extensions.logging.core.LogLevelHighlightingCustomizer;
+import com.adeptj.runtime.extensions.logging.core.LogThreadNameCustomizer;
 import com.adeptj.runtime.extensions.logging.core.LogbackConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -93,13 +93,22 @@ public class LogbackManagerImpl implements LogbackManager {
                     Logger logger = this.loggerContext.getLogger(name);
                     logger.setLevel(Level.toLevel(logbackConfig.getLevel()));
                     logger.setAdditive(logbackConfig.isAdditivity());
-                    logbackConfig.getAppenders().forEach(logger::addAppender);
+                    if (logbackConfig.getAppenders().isEmpty()) {
+                        this.appenders.forEach(logger::addAppender);
+                    } else {
+                        logbackConfig.getAppenders().forEach(logger::addAppender);
+                    }
                 });
     }
 
     @Override
     public boolean detachAppender(String loggerName, String appenderName) {
         return this.loggerContext.getLogger(loggerName).detachAppender(appenderName);
+    }
+
+    @Override
+    public void detachAppenders(String loggerName) {
+        this.appenders.forEach(appender -> this.loggerContext.getLogger(loggerName).detachAppender(appender));
     }
 
     @Override

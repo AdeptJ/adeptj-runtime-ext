@@ -53,6 +53,8 @@ public interface LogbackManager {
 
     boolean detachAppender(String loggerName, String appenderName);
 
+    void detachAppenders(String loggerName);
+
     PatternLayoutEncoder newLayoutEncoder(String logPattern);
 
     ConsoleAppender<ILoggingEvent> newConsoleAppender(String name, String logPattern);
